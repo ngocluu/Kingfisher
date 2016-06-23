@@ -194,7 +194,6 @@ public class ImagePrefetcher {
     }
     
     func downloadAndCacheResource(resource: Resource) {
-        
         let downloadTaskCompletionHandler:CompletionHandler = { (image, error, _, _) -> () in
             self.tasks.removeValueForKey(resource.downloadURL)
             
@@ -220,6 +219,7 @@ public class ImagePrefetcher {
                                                                 forKey: resource.cacheKey,
                                                                 retrieveImageTask: RetrieveImageTask(),
                                                                 progressBlock: nil,
+                                                                transformBlock: nil,
                                                                 completionHandler: downloadTaskCompletionHandler,
                                                                 options: optionsInfo)
         

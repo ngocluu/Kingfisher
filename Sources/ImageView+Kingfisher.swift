@@ -58,6 +58,7 @@ extension ImageView {
                                    placeholderImage: Image? = nil,
                                    optionsInfo: KingfisherOptionsInfo? = nil,
                                    progressBlock: DownloadProgressBlock? = nil,
+                                   transformBlock: TransformBlock? = nil,
                                    completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         let resource = URL.map { Resource(downloadURL: $0) }
@@ -65,6 +66,7 @@ extension ImageView {
                                        placeholderImage: placeholderImage,
                                        optionsInfo: optionsInfo,
                                        progressBlock: progressBlock,
+                                       transformBlock: transformBlock,
                                        completionHandler: completionHandler)
     }
     
@@ -87,6 +89,7 @@ extension ImageView {
                                 placeholderImage: Image? = nil,
                                      optionsInfo: KingfisherOptionsInfo? = nil,
                                    progressBlock: DownloadProgressBlock? = nil,
+                                  transformBlock: TransformBlock? = nil,
                                completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         image = placeholderImage
@@ -112,6 +115,7 @@ extension ImageView {
                     progressBlock(receivedSize: receivedSize, totalSize: totalSize)
                 }
             },
+            transformBlock: transformBlock,
             completionHandler: {[weak self] image, error, cacheType, imageURL in
                 
                 dispatch_async_safely_to_main_queue {
