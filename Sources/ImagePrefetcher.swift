@@ -198,6 +198,7 @@ public class ImagePrefetcher {
             forKey: resource.cacheKey,
             retrieveImageTask: task,
             progressBlock: nil,
+            transformBlock: nil,
             completionHandler: {
                 (image, error, _, _) -> () in
                 
