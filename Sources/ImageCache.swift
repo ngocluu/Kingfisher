@@ -74,6 +74,9 @@ public class ImageCache {
     //Memory
     private let memoryCache = NSCache()
     
+    //Decoding
+    var decoder: ImageDecoding?
+    
     /// The largest cache cost of memory cache. The total cost is pixel count of all cached images in memory.
     public var maxMemoryCost: UInt = 0 {
         didSet {
@@ -608,7 +611,8 @@ extension ImageCache {
     
     func diskImageForKey(key: String, scale: CGFloat, preloadAllGIFData: Bool) -> Image? {
         if let data = diskImageDataForKey(key) {
-            return Image.kf_imageWithData(data, scale: scale, preloadAllGIFData: preloadAllGIFData)
+            let image = decoder?.decode(data, scale: scale)
+            return image ?? Image.kf_imageWithData(data, scale: scale, preloadAllGIFData: preloadAllGIFData)
         } else {
             return nil
         }
