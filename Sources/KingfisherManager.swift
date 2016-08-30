@@ -89,6 +89,14 @@ public class KingfisherManager {
     /// Downloader used by this manager
     public var downloader: ImageDownloader
     
+    //Decoding
+    public var decoder: ImageDecoding? {
+        didSet {
+            cache.decoder = decoder
+            downloader.decoder = decoder
+        }
+    }
+    
     /**
     Default init method
     
