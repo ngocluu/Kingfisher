@@ -55,6 +55,7 @@ extension Kingfisher where Base: ImageView {
                          placeholder: Image? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
+                         transformBlock: TransformBlock? = nil,
                          completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         base.image = placeholder
@@ -82,6 +83,7 @@ extension Kingfisher where Base: ImageView {
                     progressBlock(receivedSize, totalSize)
                 }
             },
+            transformBlock: transformBlock,
             completionHandler: {[weak base] image, error, cacheType, imageURL in
                 DispatchQueue.main.safeAsync {
                     guard let strongBase = base, imageURL == self.webURL else {

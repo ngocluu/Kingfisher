@@ -217,6 +217,7 @@ public class ImagePrefetcher {
             forKey: resource.cacheKey,
             retrieveImageTask: RetrieveImageTask(),
             progressBlock: nil,
+            transformBlock: nil,
             completionHandler: downloadTaskCompletionHandler,
             options: optionsInfo)
         

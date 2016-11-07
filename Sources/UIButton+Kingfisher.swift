@@ -53,6 +53,7 @@ extension Kingfisher where Base: UIButton {
                          placeholder: UIImage? = nil,
                          options: KingfisherOptionsInfo? = nil,
                          progressBlock: DownloadProgressBlock? = nil,
+                         transformBlock: TransformBlock? = nil,
                          completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         base.setImage(placeholder, for: state)
@@ -71,6 +72,7 @@ extension Kingfisher where Base: UIButton {
                     progressBlock(receivedSize, totalSize)
                 }
             },
+            transformBlock: transformBlock,
             completionHandler: {[weak base] image, error, cacheType, imageURL in
                 DispatchQueue.main.safeAsync {
                     guard let strongBase = base, imageURL == self.webURL(for: state) else {
@@ -120,6 +122,7 @@ extension Kingfisher where Base: UIButton {
                                    placeholder: UIImage? = nil,
                                    options: KingfisherOptionsInfo? = nil,
                                    progressBlock: DownloadProgressBlock? = nil,
+                                   transformBlock: TransformBlock? = nil,
                                    completionHandler: CompletionHandler? = nil) -> RetrieveImageTask
     {
         base.setBackgroundImage(placeholder, for: state)
@@ -138,6 +141,7 @@ extension Kingfisher where Base: UIButton {
                     progressBlock(receivedSize, totalSize)
                 }
             },
+            transformBlock: transformBlock,
             completionHandler: { [weak base] image, error, cacheType, imageURL in
                 DispatchQueue.main.safeAsync {
                     guard let strongBase = base, imageURL == self.backgroundWebURL(for: state) else {

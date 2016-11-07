@@ -32,6 +32,7 @@ import UIKit
 
 public typealias DownloadProgressBlock = ((_ receivedSize: Int64, _ totalSize: Int64) -> ())
 public typealias CompletionHandler = ((_ image: Image?, _ error: NSError?, _ cacheType: CacheType, _ imageURL: URL?) -> ())
+public typealias TransformBlock = (_ image: Image, _ originalData: Data) -> Image
 
 /// RetrieveImageTask represents a task of image retrieving process.
 /// It contains an async task of getting image from disk and from network.
@@ -110,6 +111,7 @@ public class KingfisherManager {
     public func retrieveImage(with resource: Resource,
         options: KingfisherOptionsInfo?,
         progressBlock: DownloadProgressBlock?,
+        transformBlock: TransformBlock?,
         completionHandler: CompletionHandler?) -> RetrieveImageTask
     {
         let task = RetrieveImageTask()
@@ -120,6 +122,7 @@ public class KingfisherManager {
                 forKey: resource.cacheKey,
                 retrieveImageTask: task,
                 progressBlock: progressBlock,
+                transformBlock: transformBlock,
                 completionHandler: completionHandler,
                 options: options)
         } else {
@@ -128,6 +131,7 @@ public class KingfisherManager {
                 with: resource.downloadURL,
                 retrieveImageTask: task,
                 progressBlock: progressBlock,
+                transformBlock: transformBlock,
                 completionHandler: completionHandler,
                 options: options)
         }
@@ -140,6 +144,7 @@ public class KingfisherManager {
                              forKey key: String,
                       retrieveImageTask: RetrieveImageTask,
                           progressBlock: DownloadProgressBlock?,
+                         transformBlock: TransformBlock?,
                       completionHandler: CompletionHandler?,
                                 options: KingfisherOptionsInfo?) -> RetrieveImageDownloadTask?
     {
@@ -162,6 +167,21 @@ public class KingfisherManager {
                 }
                 
                 if let image = image, let originalData = originalData {
+                    if let transformBlock = transformBlock {
+                        DispatchQueue.global().async {
+                            let newImage = transformBlock(image, originalData)
+                            targetCache.store(newImage,
+                                              original: originalData,
+                                              forKey: key,
+                                              processorIdentifier:options.processor.identifier,
+                                              cacheSerializer: options.cacheSerializer,
+                                              toDisk: !options.cacheMemoryOnly,
+                                              completionHandler: nil)
+                            completionHandler?(image, error, .none, url)
+                        }
+                        return
+                    }
+                    
                     targetCache.store(image,
                                       original: originalData,
                                       forKey: key,
@@ -180,6 +200,7 @@ public class KingfisherManager {
                                        with url: URL,
                               retrieveImageTask: RetrieveImageTask,
                                   progressBlock: DownloadProgressBlock?,
+                                 transformBlock: TransformBlock?,
                               completionHandler: CompletionHandler?,
                                         options: KingfisherOptionsInfo?)
     {
@@ -203,6 +224,7 @@ public class KingfisherManager {
                         forKey: key,
                         retrieveImageTask: retrieveImageTask,
                         progressBlock: progressBlock,
+                        transformBlock: transformBlock,
                         completionHandler: diskTaskCompletionHandler,
                         options: options)
                 }
