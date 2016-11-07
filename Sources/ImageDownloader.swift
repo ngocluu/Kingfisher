@@ -176,6 +176,13 @@ open class ImageDownloader: NSObject {
         var downloadTask: RetrieveImageDownloadTask?
     }
     
+    //Decoding
+    var decoder: ImageDecoding? {
+        didSet {
+            sessionHandler.decoder = decoder
+        }
+    }
+    
     // MARK: - Public property
     /// The duration before the download is timeout. Default is 15 seconds.
     open var downloadTimeout: TimeInterval = 15.0
@@ -375,6 +382,9 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
     // It will be set when the task started, and reset when the task finished.
     var downloadHolder: ImageDownloader?
     
+    //Decoding
+    var decoder: ImageDecoding?
+    
     func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
         
         guard let downloader = downloadHolder else {
@@ -494,7 +504,7 @@ class ImageDownloaderSessionHandler: NSObject, URLSessionDataDelegate, Authentic
                 
                 let processoor = options.processor
                 
-                var image = imageCache[processoor.identifier]
+                var image = self.decoder?.decode(data: data) ?? imageCache[processoor.identifier]
                 if image == nil {
                     image = processoor.process(item: .data(data), options: options)
                     

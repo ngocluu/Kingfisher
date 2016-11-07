@@ -71,6 +71,9 @@ open class ImageCache {
     //Memory
     fileprivate let memoryCache = NSCache<NSString, AnyObject>()
     
+    //Decoding
+    var decoder: ImageDecoding?
+    
     /// The largest cache cost of memory cache. The total cost is pixel count of 
     /// all cached images in memory.
     /// Default is unlimited. Memory cache will be purged automatically when a 
@@ -627,7 +630,8 @@ extension ImageCache {
   
     func diskImage(forComputedKey key: String, serializer: CacheSerializer, options: KingfisherOptionsInfo) -> Image? {
         if let data = diskImageData(forComputedKey: key) {
-            return serializer.image(with: data, options: options)
+            let image = decoder?.decode(data: data)
+            return image ?? serializer.image(with: data, options: options)
         } else {
             return nil
         }
